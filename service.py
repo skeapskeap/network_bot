@@ -14,7 +14,7 @@ def get_smile(user_data):
 
 
 def main_keyboard():
-    return ReplyKeyboardMarkup([['/start', '/cat']], resize_keyboard=True)
+    return ReplyKeyboardMarkup([['/start']], resize_keyboard=True)
 
 
 def set_port_keyboard():

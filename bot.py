@@ -1,5 +1,5 @@
 from dialog import switch_dialog, set_ip, set_port, run_command
-from handlers import whatever
+from handlers import whatever, wrong_input
 import logging
 import settings
 from telegram.ext import Updater, Filters
@@ -26,7 +26,9 @@ def main():
                 CommandHandler('sh_port', run_command),
                 CommandHandler('sh_mac', run_command)]
             },
-        fallbacks=[]
+        fallbacks=[
+            MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)
+        ]
     )
     dp.add_handler(show_switch)
     dp.add_handler(MessageHandler(Filters.text, whatever))
