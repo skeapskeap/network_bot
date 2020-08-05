@@ -1,2 +1,2 @@
 # network_bot
-bot for communication with network equipment
+telegram bot for communication with network equipment
