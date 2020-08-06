@@ -35,9 +35,9 @@ def snmp_get(*args):  # args = [community, ip, port, OID]
 
 
 def choose_cmd(ip, port, cmd):
-    if cmd == '/sh_port':
+    if cmd == 'sh_port':
         return sh_port(ip, port, cmd)
-    elif cmd == '/sh_mac':
+    elif cmd == 'sh_mac':
         return sh_mac(ip, port)
     else:
         return 'не понял, что делать?'

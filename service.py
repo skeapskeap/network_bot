@@ -18,11 +18,11 @@ def main_keyboard():
 
 
 def set_port_keyboard():
-    return ReplyKeyboardMarkup([['/change_ip']], resize_keyboard=True)
+    return ReplyKeyboardMarkup([['change_ip']], resize_keyboard=True)
 
 
 def command_keyboard():
-    return ReplyKeyboardMarkup([['/change_ip', '/change_port', '/sh_port', '/sh_mac']], resize_keyboard=True)
+    return ReplyKeyboardMarkup([['change_ip', 'change_port', 'sh_port', 'sh_mac']], resize_keyboard=True)
 
 
 def check_ip(input_data):

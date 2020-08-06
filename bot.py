@@ -18,13 +18,13 @@ def main():
         states={
             'set_ip': [MessageHandler(Filters.text, set_ip)],
             'set_port': [
-                CommandHandler('change_ip', switch_dialog),
+                MessageHandler(Filters.text('change_ip'), switch_dialog),
                 MessageHandler(Filters.text, set_port)],
             'commands': [
-                CommandHandler('change_ip', switch_dialog),
-                CommandHandler('change_port', set_ip),
-                CommandHandler('sh_port', run_command),
-                CommandHandler('sh_mac', run_command)]
+                MessageHandler(Filters.text('change_ip'), switch_dialog),
+                MessageHandler(Filters.text('change_port'), set_ip),
+                MessageHandler(Filters.text('sh_port'), run_command),
+                MessageHandler(Filters.text('sh_mac'), run_command)]
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)
