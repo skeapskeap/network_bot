@@ -1,14 +1,20 @@
 from get_snmp import choose_cmd
 from telegram import ReplyKeyboardRemove
 from service import main_keyboard, command_keyboard, set_port_keyboard
-from service import check_ip, check_port
+from service import check_ip, check_port, new_user
 
 
 def switch_dialog(update, context):
-    context.user_data['have_ip'] = False
-    context.user_data['have_port'] = False
-    update.message.reply_text('введите IP', reply_markup=ReplyKeyboardRemove())
-    return 'set_ip'
+    user_id = update._effective_user.id
+    user_name = update._effective_user.first_name
+    if new_user(user_id):
+        update.message.reply_text(f'Hi, {user_name}! Your ID is {user_id}', reply_markup=ReplyKeyboardRemove())
+        return 'new_user'
+    else:
+        context.user_data['have_ip'] = False
+        context.user_data['have_port'] = False
+        update.message.reply_text('введите IP', reply_markup=ReplyKeyboardRemove())
+        return 'set_ip'
 
 
 def set_ip(update, context):

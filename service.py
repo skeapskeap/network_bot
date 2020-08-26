@@ -45,3 +45,10 @@ def check_port(input_data):
         return True
     else:
         return False
+
+
+def new_user(user_id):
+    if str(user_id) not in settings.USER_LIST:
+        return True
+    else:
+        return False
