@@ -110,4 +110,5 @@ switchinfo.py
 settings.py
 bot_log
 .vscode/
-.DS_store
+deco.py
+niokr.py

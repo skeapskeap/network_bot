@@ -22,7 +22,9 @@ def set_port_keyboard():
 
 
 def command_keyboard():
-    return ReplyKeyboardMarkup([['change_ip', 'change_port', 'sh_port', 'sh_mac']], resize_keyboard=True)
+    first_row = ['sh_port', 'sh_mac', 'cab_diag']
+    second_row = ['change_ip', 'change_port']
+    return ReplyKeyboardMarkup([first_row, second_row], resize_keyboard=True)
 
 
 def check_ip(input_data):

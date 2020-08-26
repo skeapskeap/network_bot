@@ -24,7 +24,8 @@ def main():
                 MessageHandler(Filters.regex('^change_ip$'), switch_dialog),
                 MessageHandler(Filters.regex('^change_port$'), set_ip),
                 MessageHandler(Filters.regex('^sh_port$'), run_command),
-                MessageHandler(Filters.regex('^sh_mac$'), run_command)]
+                MessageHandler(Filters.regex('^sh_mac$'), run_command),
+                MessageHandler(Filters.regex('^cab_diag$'), run_command)]
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)

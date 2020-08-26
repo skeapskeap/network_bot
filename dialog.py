@@ -50,8 +50,8 @@ def run_command(update, context):
     ip = context.user_data["selected_ip"]
     port = context.user_data["selected_port"]
 
-    snmp_reply = choose_cmd(ip, port, command)
-    update.message.reply_text(snmp_reply)
+    switch_reply = choose_cmd(ip, port, command)
+    update.message.reply_text(switch_reply)
     return 'commands'
 
 
