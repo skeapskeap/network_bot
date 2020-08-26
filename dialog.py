@@ -1,20 +1,25 @@
 from get_snmp import choose_cmd
 from telegram import ReplyKeyboardRemove
-from service import main_keyboard, command_keyboard, set_port_keyboard
+from service import start_keyboard, menu_keyboard, command_keyboard, set_port_keyboard, to_menu_keyboard
 from service import check_ip, check_port, new_user
 
 
-def switch_dialog(update, context):
+def main_menu(update, context):
     user_id = update._effective_user.id
     user_name = update._effective_user.first_name
     if new_user(user_id):
         update.message.reply_text(f'Hi, {user_name}! Your ID is {user_id}', reply_markup=ReplyKeyboardRemove())
         return 'new_user'
     else:
-        context.user_data['have_ip'] = False
-        context.user_data['have_port'] = False
-        update.message.reply_text('введите IP', reply_markup=ReplyKeyboardRemove())
-        return 'set_ip'
+        update.message.reply_text("You're now in main menu", reply_markup=menu_keyboard())
+        return 'main_menu'
+
+
+def switch_dialog(update, context):
+    context.user_data['have_ip'] = False
+    context.user_data['have_port'] = False
+    update.message.reply_text('введите IP', reply_markup=to_menu_keyboard())
+    return 'set_ip'
 
 
 def set_ip(update, context):
@@ -27,7 +32,7 @@ def set_ip(update, context):
         context.user_data['have_ip'] = True
         return ask_port(update, context)
     else:
-        update.message.reply_text('некорректный IP')
+        update.message.reply_text('некорректный IP', reply_markup=to_menu_keyboard())
         return 'set_ip'
 
 
@@ -61,6 +66,16 @@ def run_command(update, context):
     return 'commands'
 
 
+def ups_dialog(update, context):
+    update.message.reply_text('это ещё не работает', reply_markup=menu_keyboard())
+    return 'main_menu'
+
+
+def ping_dialog(update, context):
+    update.message.reply_text('это ещё не работает', reply_markup=menu_keyboard())
+    return 'main_menu'
+
+
 def clear(update, context):
     context.user_data.clear()
-    update.message.reply_text('Loged out', reply_markup=main_keyboard())
+    update.message.reply_text('Loged out', reply_markup=start_keyboard())
