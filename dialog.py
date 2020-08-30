@@ -1,4 +1,4 @@
-from get_snmp import choose_cmd, get_port_stats
+from get_snmp import choose_cmd, get_port_stats, sh_port ,snmp_reachable
 from telegram import ReplyKeyboardRemove
 from service import command_keyboard, menu_keyboard, port_stats_keyboard
 from service import set_port_keyboard, to_menu_keyboard
@@ -48,9 +48,10 @@ def ask_port(update, context):
 
 
 def set_port(update, context):
-    user_reply = update.message.text
-    if check_port(user_reply):
-        context.user_data['selected_port'] = user_reply
+    ip = context.user_data["selected_ip"]
+    port = update.message.text
+    if check_port(port) and sh_port(ip, port):
+        context.user_data['selected_port'] = port
         context.user_data['have_port'] = True
         update.message.reply_text(f'ip: {context.user_data["selected_ip"]}\n'
                                   f'port: {context.user_data["selected_port"]}',
@@ -75,17 +76,17 @@ def port_stats(update, context):
     ip = context.user_data["selected_ip"]
     port = context.user_data["selected_port"]
     rx_bytes, tx_bytes, crc_err = get_port_stats(ip, port)
-    print(get_port_stats(ip, port))
+
     if context.user_data['have_stats']:
-        print(context.user_data['rx_bytes'])
         time_delta = int(time()) - context.user_data['start_time']
         rx_rate = (rx_bytes - context.user_data['rx_bytes']) // time_delta
         tx_rate = (tx_bytes - context.user_data['tx_bytes']) // time_delta
         rx_rate_mbit = rx_rate * 8 / 1024 / 1024
         tx_rate_mbit = tx_rate * 8 / 1024 / 1024
-        update.message.reply_text(f'rx_rate: {round(rx_rate_mbit, 2)} mbit/s,\n'
-                                  f'tx_rate: {round(tx_rate_mbit, 2)} mbit/s,\n'
-                                  f'crc: {crc_err}',
+        update.message.reply_text(f'Average in {time_delta} seconds:\n'
+                                  f'  rx_rate: {round(rx_rate_mbit, 2)} mbit/s,\n'
+                                  f'  tx_rate: {round(tx_rate_mbit, 2)} mbit/s,\n'
+                                  f'Total crc: {crc_err}',
                                   reply_markup=port_stats_keyboard())
     else:
         context.user_data['start_time'] = int(time())

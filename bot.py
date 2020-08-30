@@ -1,10 +1,10 @@
-from dialog import main_menu, switch_dialog, ups_dialog, ping_dialog, set_ip, set_port
-from dialog import run_command, port_stats, back_to_commands, clear_stats
+from dialog import back_to_commands, clear_stats, main_menu, ping_dialog, port_stats
+from dialog import run_command, set_ip, set_port, switch_dialog, ups_dialog
 from handlers import whatever, wrong_input
 import logging
 import settings
 from telegram.ext import Updater, Filters
-from telegram.ext import CommandHandler, MessageHandler, ConversationHandler
+from telegram.ext import MessageHandler, ConversationHandler
 
 
 logging.basicConfig(filename='bot_log', level=logging.INFO)
@@ -15,7 +15,7 @@ def main():
     dp = mybot.dispatcher
 
     show_switch = ConversationHandler(
-        entry_points=[CommandHandler('start', main_menu)],
+        entry_points=[MessageHandler(Filters.regex('^start$'), main_menu)],
         states={
             'main_menu': [
                 MessageHandler(Filters.regex('^switch$'), switch_dialog),

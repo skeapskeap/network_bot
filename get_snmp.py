@@ -42,8 +42,9 @@ def snmp_get(*args):  # args = [community, ip, port, OID]
 
 
 def snmp_reachable(ip):
-    if snmp_get(COMMUNITY, ip, SNMP_PORT, MODEL_NAME):
-        return True
+    switch_model = snmp_get(COMMUNITY, ip, SNMP_PORT, MODEL_NAME)
+    if switch_model:
+        return switch_model
     else:
         return False
 
@@ -55,10 +56,8 @@ def choose_cmd(ip, port, cmd):
         return sh_mac(ip, port)
     elif cmd == 'cab_diag':
         return cab_diag(ip, port)
-    elif cmd == 'traffic':
-        return port_stats(ip, port)
     else:
-        return 'не понял, что делать?'
+        return 'Unknown command'
 
 
 def sh_port(ip, port):
@@ -71,9 +70,12 @@ def sh_port(ip, port):
             duplex = 'full'
         else:
             duplex = 'half'
-        speed = int(int(snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_SPEED + port)))/1000000)
-        status = f'port {port}: state up, {speed} {duplex}'
-    return status
+        try:
+            speed = int(int(snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_SPEED + port)))/1000000)
+            status = f'port {port}: state up, {speed} {duplex}'
+            return status
+        except ValueError:
+            return False
 
 
 def get_port_stats(ip, port):
