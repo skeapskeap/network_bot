@@ -1,4 +1,5 @@
-from dialog import main_menu, switch_dialog, ups_dialog, ping_dialog, set_ip, set_port, run_command
+from dialog import main_menu, switch_dialog, ups_dialog, ping_dialog, set_ip, set_port
+from dialog import run_command, port_stats, back_to_commands, clear_stats
 from handlers import whatever, wrong_input
 import logging
 import settings
@@ -36,7 +37,12 @@ def main():
                 MessageHandler(Filters.regex('^change_port$'), set_ip),
                 MessageHandler(Filters.regex('^sh_port$'), run_command),
                 MessageHandler(Filters.regex('^sh_mac$'), run_command),
-                MessageHandler(Filters.regex('^cab_diag$'), run_command)]
+                MessageHandler(Filters.regex('^cab_diag$'), run_command),
+                MessageHandler(Filters.regex('^stats$'), port_stats)],
+            'port_stats': [
+                MessageHandler(Filters.regex('^back$'), back_to_commands),
+                MessageHandler(Filters.regex('^refresh$'), port_stats),
+                MessageHandler(Filters.regex('^reset$'), clear_stats)]
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)

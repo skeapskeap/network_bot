@@ -14,7 +14,7 @@ def get_smile(user_data):
 
 
 def start_keyboard():
-    return ReplyKeyboardMarkup([['/start']], resize_keyboard=True)
+    return ReplyKeyboardMarkup([['start']], resize_keyboard=True)
 
 
 def menu_keyboard():
@@ -29,8 +29,12 @@ def set_port_keyboard():
     return ReplyKeyboardMarkup([['change_ip', 'menu']], resize_keyboard=True)
 
 
+def port_stats_keyboard():
+    return ReplyKeyboardMarkup([['back', 'refresh', 'reset']], resize_keyboard=True)
+
+
 def command_keyboard():
-    first_row = ['sh_port', 'sh_mac', 'cab_diag']
+    first_row = ['sh_port', 'sh_mac', 'cab_diag', 'stats']
     second_row = ['change_ip', 'change_port', 'menu']
     return ReplyKeyboardMarkup([first_row, second_row], resize_keyboard=True)
 

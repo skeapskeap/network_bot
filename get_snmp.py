@@ -9,10 +9,15 @@ from time import sleep
 import telnetlib
 
 
-port_state = '1.3.6.1.2.1.2.2.1.8.'       # 1=up, 2=down
-port_duplex = '.1.3.6.1.2.1.10.7.2.1.19.'  # 3=full, 2=half
-port_speed = '.1.3.6.1.2.1.2.2.1.5.'       # /1000000
-# model_name = '.1.3.6.1.2.1.1.1.0'
+PORT_STATE = '1.3.6.1.2.1.2.2.1.8.'       # 1=up, 2=down
+PORT_DUPLEX = '.1.3.6.1.2.1.10.7.2.1.19.'  # 3=full, 2=half
+PORT_SPEED = '.1.3.6.1.2.1.2.2.1.5.'       # /1000000
+RX_BYTES = '.1.3.6.1.2.1.31.1.1.1.6.'  # http://xcme.blogspot.com/2014/10/oid-snmp.html
+TX_BYTES = '.1.3.6.1.2.1.31.1.1.1.10.'
+ALIG_ERR = '.1.3.6.1.2.1.10.7.2.1.2.'  # dot3StatsAlignmentErrors
+FCS_ERR = '.1.3.6.1.2.1.10.7.2.1.3.'  # dot3StatsFCSErrors
+# CRC = alig + fcs
+MODEL_NAME = '.1.3.6.1.2.1.1.1.0'
 # snmpwalk -v 2c -c <community> <IP> 1.3.6.1.2.1.17.7.1.2.2.1.2.1850 маки по влану
 # SNMPv2-SMI::mib-2.17.7.1.2.2.1.2.1850.244.140.235.232.146.251 = INTEGER: 10 - это 10 порт
 # snmpwalk -v 2c -c <community> <IP> 1.3.6.1.2.1.17.7.1.4.5.1.1.9 - port_vlanid, возвращает нетегированный влан на порту
@@ -36,6 +41,13 @@ def snmp_get(*args):  # args = [community, ip, port, OID]
         return val.prettyPrint()
 
 
+def snmp_reachable(ip):
+    if snmp_get(COMMUNITY, ip, SNMP_PORT, MODEL_NAME):
+        return True
+    else:
+        return False
+
+
 def choose_cmd(ip, port, cmd):
     if cmd == 'sh_port':
         return sh_port(ip, port)
@@ -43,23 +55,36 @@ def choose_cmd(ip, port, cmd):
         return sh_mac(ip, port)
     elif cmd == 'cab_diag':
         return cab_diag(ip, port)
+    elif cmd == 'traffic':
+        return port_stats(ip, port)
     else:
         return 'не понял, что делать?'
 
 
 def sh_port(ip, port):
-    if not snmp_get(COMMUNITY, ip, SNMP_PORT, (port_state + port)):
+    if not snmp_reachable(ip):
         return 'host timed out'
-    if snmp_get(COMMUNITY, ip, SNMP_PORT, (port_state + port)) == '2':
+    if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_STATE + port)) == '2':
         status = f'port {port}: state down'
     else:
-        if snmp_get(COMMUNITY, ip, SNMP_PORT, (port_duplex + port)) == '3':
+        if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_DUPLEX + port)) == '3':
             duplex = 'full'
         else:
             duplex = 'half'
-        speed = int(int(snmp_get(COMMUNITY, ip, SNMP_PORT, (port_speed + port)))/1000000)
+        speed = int(int(snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_SPEED + port)))/1000000)
         status = f'port {port}: state up, {speed} {duplex}'
     return status
+
+
+def get_port_stats(ip, port):
+    if not snmp_reachable(ip):
+        return 'host timed out'
+    rx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (RX_BYTES + port)))
+    tx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (TX_BYTES + port)))
+    alig_err = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (ALIG_ERR + port)))
+    fcs_err = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (FCS_ERR + port)))
+    crc_err = alig_err + fcs_err
+    return rx_bytes, tx_bytes, crc_err
 
 
 def telnet(func):
