@@ -1,4 +1,5 @@
-from dialog import switch_dialog, set_ip, set_port, run_command, port_stats, back_to_commands, clear_stats
+from dialog import main_menu, switch_dialog, ups_dialog, ping_dialog, set_ip, set_port
+from dialog import run_command, port_stats, back_to_commands, clear_stats
 from handlers import whatever, wrong_input
 import logging
 import settings
@@ -14,13 +15,24 @@ def main():
     dp = mybot.dispatcher
 
     show_switch = ConversationHandler(
-        entry_points=[CommandHandler('start', switch_dialog)],
+        entry_points=[CommandHandler('start', main_menu)],
         states={
-            'set_ip': [MessageHandler(Filters.text, set_ip)],
+            'main_menu': [
+                MessageHandler(Filters.regex('^switch$'), switch_dialog),
+                MessageHandler(Filters.regex('^UPS$'), ups_dialog),
+                MessageHandler(Filters.regex('^ping$'), ping_dialog)],
+
+            'set_ip': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.text, set_ip)],
+
             'set_port': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
                 MessageHandler(Filters.regex('^change_ip$'), switch_dialog),
                 MessageHandler(Filters.text, set_port)],
+
             'commands': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
                 MessageHandler(Filters.regex('^change_ip$'), switch_dialog),
                 MessageHandler(Filters.regex('^change_port$'), set_ip),
                 MessageHandler(Filters.regex('^sh_port$'), run_command),

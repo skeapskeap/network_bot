@@ -1,11 +1,12 @@
 from get_snmp import choose_cmd, get_port_stats
 from telegram import ReplyKeyboardRemove
-from service import command_keyboard, set_port_keyboard, port_stats_keyboard
+from service import command_keyboard, menu_keyboard, port_stats_keyboard
+from service import set_port_keyboard, to_menu_keyboard
 from service import check_ip, check_port, new_user
 from time import time
 
 
-def switch_dialog(update, context):
+def main_menu(update, context):
     user_id = update._effective_user.id
     user_name = update._effective_user.first_name
     if new_user(user_id):
@@ -15,8 +16,15 @@ def switch_dialog(update, context):
         context.user_data['have_ip'] = False
         context.user_data['have_port'] = False
         context.user_data['have_stats'] = False
-        update.message.reply_text('Set IP...', reply_markup=ReplyKeyboardRemove())
-        return 'set_ip'
+        update.message.reply_text("You're now in main menu", reply_markup=menu_keyboard())
+        return 'main_menu'
+
+
+def switch_dialog(update, context):
+    context.user_data['have_ip'] = False
+    context.user_data['have_port'] = False
+    update.message.reply_text('Set IP...', reply_markup=to_menu_keyboard())
+    return 'set_ip'
 
 
 def set_ip(update, context):
@@ -29,7 +37,7 @@ def set_ip(update, context):
         context.user_data['have_ip'] = True
         return ask_port(update, context)
     else:
-        update.message.reply_text('Incorrect IP')
+        update.message.reply_text('Incorrect IP', reply_markup=to_menu_keyboard())
         return 'set_ip'
 
 
@@ -101,3 +109,12 @@ def clear_stats(update, context):
     context.user_data['have_stats'] = False
     update.message.reply_text('Delete stats. Press "refresh"',
                               reply_markup=port_stats_keyboard())
+
+def ups_dialog(update, context):
+    update.message.reply_text('это ещё не работает', reply_markup=menu_keyboard())
+    return 'main_menu'
+
+
+def ping_dialog(update, context):
+    update.message.reply_text('это ещё не работает', reply_markup=menu_keyboard())
+    return 'main_menu'

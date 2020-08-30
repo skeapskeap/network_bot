@@ -1,16 +1,14 @@
-from service import get_smile, main_keyboard
+from service import start_keyboard, get_smile
 
 
-# /start
+# start
 def whatever(update, context):
+    user_name = update._effective_user.first_name
     context.user_data['emoji'] = get_smile(context.user_data)
-    update.message.reply_text(f"Hi! Press start to start {context.user_data['emoji']}",
-                              reply_markup=main_keyboard())
-
+    update.message.reply_text(f"Hi, {user_name}! {context.user_data['emoji']}\n \
+                              Press start to start",
+                              reply_markup=start_keyboard())
 
 # fallback
 def wrong_input(update, context):
-    #photo = 'pics/frodo.jpg'
-    #chat_id = update.effective_chat.id
-    #context.bot.send_photo(chat_id=chat_id, photo=open(photo, 'rb'))
     update.message.reply_text('Incorrect input')
