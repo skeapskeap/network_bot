@@ -28,22 +28,26 @@ def switch_dialog(update, context):
 
 
 def set_ip(update, context):
-    user_reply = update.message.text
+    ip = update.message.text
     if context.user_data['have_port']:
         return ask_port(update, context)
-
-    if check_ip(user_reply):
-        context.user_data['selected_ip'] = user_reply
+    if not check_ip(ip):  # проверка формата введённых цифр
+        update.message.reply_text('Incorrect IP', reply_markup=to_menu_keyboard())
+        return 'set_ip'
+    if snmp_reachable(ip):  # проверка того, что ip доступен по SNMP
+        context.user_data['switch_model'] = snmp_reachable(ip)
+        context.user_data['selected_ip'] = ip
         context.user_data['have_ip'] = True
         return ask_port(update, context)
     else:
-        update.message.reply_text('Incorrect IP', reply_markup=to_menu_keyboard())
+        update.message.reply_text('Host unreachable with SNMP', reply_markup=to_menu_keyboard())
         return 'set_ip'
 
 
 def ask_port(update, context):
-    update.message.reply_text(f'ip: {context.user_data["selected_ip"]}')
-    update.message.reply_text('Set port...', reply_markup=set_port_keyboard())
+    update.message.reply_text(f'{context.user_data["switch_model"]}\n'
+                              f'ip: {context.user_data["selected_ip"]}\n'
+                              'Set port...', reply_markup=set_port_keyboard())
     return 'set_port'
 
 

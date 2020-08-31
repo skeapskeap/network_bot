@@ -65,6 +65,7 @@ def sh_port(ip, port):
         return 'host timed out'
     if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_STATE + port)) == '2':
         status = f'port {port}: state down'
+        return status
     else:
         if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_DUPLEX + port)) == '3':
             duplex = 'full'
