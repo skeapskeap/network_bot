@@ -81,7 +81,7 @@ def sh_port(ip, port):
 
 def get_port_stats(ip, port):
     if not snmp_reachable(ip):
-        return 'host timed out'
+        return False
     rx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (RX_BYTES + port)))
     tx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (TX_BYTES + port)))
     alig_err = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (ALIG_ERR + port)))

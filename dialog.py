@@ -80,21 +80,27 @@ def run_command(update, context):
 def port_stats(update, context):
     ip = context.user_data["selected_ip"]
     port = context.user_data["selected_port"]
-    rx_bytes, tx_bytes, crc_err = get_port_stats(ip, port)
+
+    if not get_port_stats(ip, port):  # если хост перестал отвечать на SNMP
+        update.message.reply_text('SNMP error',
+                                  reply_markup=port_stats_keyboard())
+        return 'port_stats'
+    else:
+        rx_bytes, tx_bytes, crc_err = get_port_stats(ip, port)
 
     if context.user_data['have_stats']:
         time_delta = int(time()) - context.user_data['start_time']
         rx_rate = (rx_bytes - context.user_data['rx_bytes']) // time_delta
         tx_rate = (tx_bytes - context.user_data['tx_bytes']) // time_delta
-        rx_rate_mbit = rx_rate * 8 / 1024 / 1024
-        tx_rate_mbit = tx_rate * 8 / 1024 / 1024
+        rx_rate_mbps = rx_rate * 8 / 1024 / 1024
+        tx_rate_mbps = tx_rate * 8 / 1024 / 1024
         update.message.reply_text(f'Average in {time_delta} seconds:\n'
-                                  f'  rx_rate: {round(rx_rate_mbit, 2)} mbit/s,\n'
-                                  f'  tx_rate: {round(tx_rate_mbit, 2)} mbit/s,\n'
+                                  f'  rx_rate: {round(rx_rate_mbps, 2)} mbit/s,\n'
+                                  f'  tx_rate: {round(tx_rate_mbps, 2)} mbit/s,\n'
                                   f'Total crc: {crc_err}',
                                   reply_markup=port_stats_keyboard())
     else:
-        context.user_data['start_time'] = int(time())
+        context.user_data['start_time'] = int(time())  # unix time in seconds
         context.user_data['rx_bytes'] = rx_bytes
         context.user_data['tx_bytes'] = tx_bytes
         context.user_data['have_stats'] = True
