@@ -62,7 +62,8 @@ def set_port(update, context):
                                   reply_markup=command_keyboard())
         return 'commands'
     else:
-        update.message.reply_text('Incorrect port', reply_markup=set_port_keyboard())
+        update.message.reply_text(f'Incorrect port for {context.user_data["switch_model"]}',
+                                  reply_markup=set_port_keyboard())
         return 'set_port'
 
 
