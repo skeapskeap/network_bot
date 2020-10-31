@@ -1,5 +1,8 @@
-from dialog import back_to_commands, clear_stats, main_menu, ping_dialog, port_stats
-from dialog import run_command, set_ip, set_port, switch_dialog, ups_dialog
+from dialog import main_menu
+from dialog_ping import ping_dialog, run_ping, set_ping_ip
+from dialog_switch import back_to_commands, clear_stats, port_stats
+from dialog_switch import run_command, set_ip, set_port, switch_dialog
+from dialog_ups import ups_dialog
 from handlers import whatever, wrong_input
 import logging
 import settings
@@ -39,10 +42,17 @@ def main():
                 MessageHandler(Filters.regex('^sh_mac$'), run_command),
                 MessageHandler(Filters.regex('^cab_diag$'), run_command),
                 MessageHandler(Filters.regex('^stats$'), port_stats)],
+
             'port_stats': [
                 MessageHandler(Filters.regex('^back$'), back_to_commands),
                 MessageHandler(Filters.regex('^refresh$'), port_stats),
-                MessageHandler(Filters.regex('^reset$'), clear_stats)]
+                MessageHandler(Filters.regex('^reset$'), clear_stats)],
+
+            'ping_ip': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^change_ip$'), ping_dialog),
+                MessageHandler(Filters.regex('^ping_again$'), run_ping),
+                MessageHandler(Filters.text, set_ping_ip)],
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)
