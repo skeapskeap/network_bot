@@ -2,6 +2,7 @@ from get_snmp import choose_cmd, get_port_stats, sh_port, snmp_reachable
 from service import command_keyboard, port_stats_keyboard
 from service import set_port_keyboard, to_menu_keyboard
 from service import check_ip, check_port
+from settings import SW_COMMUNITY
 from time import time
 
 
@@ -27,8 +28,9 @@ def set_ip(update, context):
             )
         return 'set_ip'
 
-    if snmp_reachable(ip):  # проверка того, что ip доступен по SNMP
-        context.user_data['switch_model'] = snmp_reachable(ip)
+    # проверка того, что ip доступен по SNMP
+    if snmp_reachable(ip, SW_COMMUNITY):
+        context.user_data['switch_model'] = snmp_reachable(ip, SW_COMMUNITY)
         context.user_data['selected_ip'] = ip
         context.user_data['have_ip'] = True
         return ask_port(update, context)

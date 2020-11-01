@@ -2,7 +2,7 @@ from dialog import main_menu
 from dialog_ping import ping_dialog, run_ping, set_ping_ip
 from dialog_switch import back_to_commands, clear_stats, port_stats
 from dialog_switch import run_command, set_ip, set_port, switch_dialog
-from dialog_ups import ups_dialog
+from dialog_ups import ups_dialog, set_ups_ip, ups_actions
 from handlers import whatever, wrong_input
 import logging
 import settings
@@ -53,6 +53,15 @@ def main():
                 MessageHandler(Filters.regex('^change_ip$'), ping_dialog),
                 MessageHandler(Filters.regex('^ping_again$'), run_ping),
                 MessageHandler(Filters.text, set_ping_ip)],
+
+            'ups_dialog': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.text, set_ups_ip)],
+
+            'ups_actions': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^change_ip$'), ups_dialog),
+                MessageHandler(Filters.regex('^refresh$'), ups_actions)],
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)

@@ -3,31 +3,20 @@
 
 from pysnmp.hlapi import getCmd, SnmpEngine, CommunityData, UdpTransportTarget
 from pysnmp.hlapi import ContextData, ObjectType, ObjectIdentity
-from settings import COMMUNITY, SNMP_PORT, SWITCH_USERNAME, SWITCH_PASSWORD
+from settings import SNMP_PORT, SWITCH_USERNAME, SWITCH_PASSWORD
+from settings import SW_COMMUNITY, UPS_COMMUNITY
+from snmp_oid import PORT_STATE, PORT_DUPLEX, PORT_SPEED, MODEL_NAME
+from snmp_oid import RX_BYTES, TX_BYTES, ALIG_ERR, FCS_ERR
+from snmp_oid import UPS_MODEL, LOCATION
+from snmp_oid import INPUT_VOLTAGE, BATTERY_CHARGE, RUNTIME
 import socket
 from time import sleep
 import telnetlib
 
 
-PORT_STATE = '1.3.6.1.2.1.2.2.1.8.'       # 1=up, 2=down
-PORT_DUPLEX = '.1.3.6.1.2.1.10.7.2.1.19.'  # 3=full, 2=half
-PORT_SPEED = '.1.3.6.1.2.1.2.2.1.5.'       # /1000000
-RX_BYTES = '.1.3.6.1.2.1.31.1.1.1.6.'  # http://xcme.blogspot.com/2014/10/oid-snmp.html
-TX_BYTES = '.1.3.6.1.2.1.31.1.1.1.10.'
-ALIG_ERR = '.1.3.6.1.2.1.10.7.2.1.2.'  # dot3StatsAlignmentErrors
-FCS_ERR = '.1.3.6.1.2.1.10.7.2.1.3.'  # dot3StatsFCSErrors
-# CRC = alig + fcs
-MODEL_NAME = '.1.3.6.1.2.1.1.1.0'
-# snmpwalk -v 2c -c <community> <IP> 1.3.6.1.2.1.17.7.1.2.2.1.2.1850 маки по влану
-# SNMPv2-SMI::mib-2.17.7.1.2.2.1.2.1850.244.140.235.232.146.251 = INTEGER: 10 - это 10 порт
-# snmpwalk -v 2c -c <community> <IP> 1.3.6.1.2.1.17.7.1.4.5.1.1.9 - port_vlanid, возвращает нетегированный влан на порту
-# vlan on port http://xcme.blogspot.com/2014/10/vlan-snmp.html
-# OID = port_status + '1'
-
-
 def snmp_getcmd(community, ip, port, OID):
     return getCmd(SnmpEngine(),
-                  CommunityData(COMMUNITY),
+                  CommunityData(community),
                   UdpTransportTarget((ip, port), timeout=0.5, retries=0),
                   ContextData(),
                   ObjectType(ObjectIdentity(OID)))
@@ -41,8 +30,8 @@ def snmp_get(*args):  # args = [community, ip, port, OID]
         return val.prettyPrint()
 
 
-def snmp_reachable(ip):
-    switch_model = snmp_get(COMMUNITY, ip, SNMP_PORT, MODEL_NAME)
+def snmp_reachable(ip, community):
+    switch_model = snmp_get(community, ip, SNMP_PORT, MODEL_NAME)
     if switch_model:
         return switch_model
     else:
@@ -61,18 +50,19 @@ def choose_cmd(ip, port, cmd):
 
 
 def sh_port(ip, port):
-    if not snmp_reachable(ip):
+    if not snmp_reachable(ip, SW_COMMUNITY):
         return 'host timed out'
-    if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_STATE + port)) == '2':
+    args = SW_COMMUNITY, ip, SNMP_PORT
+    if snmp_get(*args, (PORT_STATE + port)) == '2':
         status = f'port {port}: state down'
         return status
     else:
-        if snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_DUPLEX + port)) == '3':
+        if snmp_get(*args, (PORT_DUPLEX + port)) == '3':
             duplex = 'full'
         else:
             duplex = 'half'
         try:
-            speed = int(int(snmp_get(COMMUNITY, ip, SNMP_PORT, (PORT_SPEED + port)))/1000000)
+            speed = int(int(snmp_get(*args, (PORT_SPEED + port)))/1000000)
             status = f'port {port}: state up, {speed} {duplex}'
             return status
         except ValueError:
@@ -80,14 +70,32 @@ def sh_port(ip, port):
 
 
 def get_port_stats(ip, port):
-    if not snmp_reachable(ip):
+    if not snmp_reachable(ip, SW_COMMUNITY):
         return False
-    rx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (RX_BYTES + port)))
-    tx_bytes = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (TX_BYTES + port)))
-    alig_err = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (ALIG_ERR + port)))
-    fcs_err = int(snmp_get(COMMUNITY, ip, SNMP_PORT, (FCS_ERR + port)))
+    args = SW_COMMUNITY, ip, SNMP_PORT
+    rx_bytes = int(snmp_get(*args, (RX_BYTES + port)))
+    tx_bytes = int(snmp_get(*args, (TX_BYTES + port)))
+    alig_err = int(snmp_get(*args, (ALIG_ERR + port)))
+    fcs_err = int(snmp_get(*args, (FCS_ERR + port)))
     crc_err = alig_err + fcs_err
     return rx_bytes, tx_bytes, crc_err
+
+
+def ups_info(ip):
+    if not snmp_reachable(ip, UPS_COMMUNITY):
+        return False
+    args = UPS_COMMUNITY, ip, SNMP_PORT
+    model = snmp_get(*args, UPS_MODEL)
+    loc = snmp_get(*args, LOCATION)
+    voltage = int(snmp_get(*args, INPUT_VOLTAGE))
+    charge = int(snmp_get(*args, BATTERY_CHARGE))
+    runtime = int(snmp_get(*args, RUNTIME))
+    reply = {'model': model,
+             'location': loc,
+             'voltage': voltage,
+             'charge': charge,
+             'runtime': runtime}
+    return reply
 
 
 def telnet(func):

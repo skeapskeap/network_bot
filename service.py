@@ -61,7 +61,14 @@ def command_keyboard():
 
 def ping_keyboard():
     return ReplyKeyboardMarkup(
-        [['change_ip', 'menu', 'ping_again']],
+        [['ping_again', 'change_ip', 'menu']],
+        resize_keyboard=True
+        )
+
+
+def ups_keyboard():
+    return ReplyKeyboardMarkup(
+        [['refresh', 'change_ip', 'menu']],
         resize_keyboard=True
         )
 
@@ -103,3 +110,20 @@ def linux_cli(target: str, command: str) -> str:
     except subprocess.CalledProcessError as proc_err:
         result = proc_err.output
     return result
+
+
+def time_translate(time: int) -> str:
+    seconds = time // 100
+    minutes, hours, days = 0, 0, 0
+    if seconds > 60:
+        minutes = seconds // 60
+        time = f'{minutes}min'
+    if minutes > 60:
+        hours = minutes // 60
+        minutes = minutes % 60
+        time = f'{hours}hr {minutes}min'
+    if hours > 24:
+        days = hours // 24
+        hours = hours % 24
+        time = f'{days}d {hours}hr {minutes}min'
+    return time

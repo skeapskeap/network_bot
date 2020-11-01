@@ -4,7 +4,7 @@ from service import to_menu_keyboard, ping_keyboard
 
 def ping_dialog(update, context):
     context.user_data['ping_ip'] = None
-    update.message.reply_text('Set IP to ping...',
+    update.message.reply_text('Set host to ping...',
                               reply_markup=to_menu_keyboard())
     return 'ping_ip'
 
