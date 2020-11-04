@@ -115,3 +115,4 @@ niokr.py
 update_example.txt
 .DS_Store
 nohup.out
+*.db
