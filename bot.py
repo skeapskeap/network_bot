@@ -1,7 +1,7 @@
 from dialog import main_menu
 from dialog_ping import ping_dialog, run_ping, set_ping_ip
-from dialog_switch import back_to_commands, clear_stats, port_stats
-from dialog_switch import run_command, set_ip, set_port, switch_dialog
+from dialog_switch import back_to_commands, clear_stats, port_stats, run_command
+from dialog_switch import run_search, set_ip, set_port, switch_search, switch_dialog
 from dialog_ups import ups_dialog, set_ups_ip, ups_actions
 from handlers import whatever, wrong_input
 import logging
@@ -27,7 +27,13 @@ def main():
 
             'set_ip': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^switch_search$'), switch_search),
                 MessageHandler(Filters.text, set_ip)],
+
+            'search_menu': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), switch_dialog),
+                MessageHandler(Filters.text, run_search)],
 
             'set_port': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
@@ -69,7 +75,7 @@ def main():
     )
     dp.add_handler(show_switch)
     dp.add_handler(MessageHandler(Filters.text, whatever))
-    logging.info('Включили бота')
+    logging.info('Bot is now running')
     mybot.start_polling()
     mybot.idle()
 

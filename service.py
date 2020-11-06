@@ -35,6 +35,20 @@ def to_menu_keyboard():
         )
 
 
+def back_and_menu():
+    return ReplyKeyboardMarkup(
+        [['menu', 'back']],
+        resize_keyboard=True
+        )
+
+
+def switch_keyboard():
+    return ReplyKeyboardMarkup(
+        [['menu', 'switch_search']],
+        resize_keyboard=True
+        )
+
+
 def set_port_keyboard():
     return ReplyKeyboardMarkup(
         [['change_ip', 'menu']],

@@ -1,6 +1,7 @@
 from get_snmp import choose_cmd, get_port_stats, sh_port, snmp_reachable
-from service import command_keyboard, port_stats_keyboard
-from service import set_port_keyboard, to_menu_keyboard
+from db_search import search_in_db
+from service import back_and_menu, command_keyboard, port_stats_keyboard
+from service import switch_keyboard, set_port_keyboard, to_menu_keyboard
 from service import check_ip, check_port
 from settings import SW_COMMUNITY
 from time import time
@@ -11,9 +12,31 @@ def switch_dialog(update, context):
     context.user_data['have_port'] = False
     update.message.reply_text(
         'Set IP...',
-        reply_markup=to_menu_keyboard()
+        reply_markup=switch_keyboard()
         )
     return 'set_ip'
+
+
+def switch_search(update, context):
+    # выглядит криво, но это единственный способ
+    # сделать человеческие отступы в телеге
+    message = '''Введите адрес или название, или часть названия.
+Ну хоть что-нибудь. Через пробел пожалуйста.'''
+    update.message.reply_text(
+        message,
+        reply_markup=back_and_menu()
+        )
+    return 'search_menu'
+
+
+def run_search(update, context):
+    words = update.message.text
+    result = search_in_db(words)
+    update.message.reply_text(
+        result,
+        reply_markup=back_and_menu()
+    )
+    return 'search_menu'
 
 
 def set_ip(update, context):
