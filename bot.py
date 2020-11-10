@@ -1,16 +1,14 @@
+from db_renew import renew_db
 from dialog import main_menu
 from dialog_ping import ping_dialog, run_ping, set_ping_ip
 from dialog_switch import back_to_commands, clear_stats, port_stats, run_command
 from dialog_switch import run_search, set_ip, set_port, switch_search, switch_dialog
 from dialog_ups import ups_dialog, set_ups_ip, ups_actions
 from handlers import whatever, wrong_input
-import logging
-import settings
+from service import EveryHourRun, logger
 from telegram.ext import Updater, Filters
 from telegram.ext import MessageHandler, ConversationHandler
-
-
-logging.basicConfig(filename='bot_log', level=logging.INFO)
+import settings
 
 
 def main():
@@ -75,7 +73,8 @@ def main():
     )
     dp.add_handler(show_switch)
     dp.add_handler(MessageHandler(Filters.text, whatever))
-    logging.info('Bot is now running')
+    logger.info('Bot is now running')
+    EveryHourRun(renew_db)
     mybot.start_polling()
     mybot.idle()
 

@@ -1,10 +1,23 @@
 from emoji import emojize
+from telegram import ReplyKeyboardMarkup
+from time import sleep
+import logging
+from logging import handlers
 import random
 import re
 import settings
 import socket
 import subprocess
-from telegram import ReplyKeyboardMarkup
+import threading
+
+
+handler = handlers.RotatingFileHandler(
+    filename='log', maxBytes=512_000, backupCount=5)
+formatter = logging.Formatter(
+    '%(asctime)s; %(levelname)s; %(name)s; %(message)s', '%c')
+handler.setFormatter(formatter)
+logging.basicConfig(level=logging.INFO, handlers=[handler])
+logger = logging.getLogger()
 
 
 # Выбор смайлика
@@ -141,3 +154,17 @@ def time_translate(time: int) -> str:
         hours = hours % 24
         time = f'{days}d {hours}hr {minutes}min'
     return time
+
+
+class EveryHourRun():
+
+    def __init__(self, func):
+        self.func = func
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True
+        thread.start()
+
+    def run(self):
+        while True:
+            self.func()
+            sleep(3600)

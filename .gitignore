@@ -108,7 +108,7 @@ site
 
 switchinfo.py
 settings.py
-bot_log
+*log
 .vscode/
 deco.py
 niokr.py
@@ -116,3 +116,4 @@ update_example.txt
 .DS_Store
 nohup.out
 *.db
+*.csv
