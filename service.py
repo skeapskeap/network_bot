@@ -12,7 +12,7 @@ import threading
 
 
 handler = handlers.RotatingFileHandler(
-    filename='log', maxBytes=512_000, backupCount=5)
+    filename='bot_log', maxBytes=512_000, backupCount=5)
 formatter = logging.Formatter(
     '%(asctime)s; %(levelname)s; %(name)s; %(message)s', '%c')
 handler.setFormatter(formatter)

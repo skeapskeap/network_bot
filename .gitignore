@@ -107,7 +107,7 @@ site
 .idea
 
 settings.py
-*log
+bot_log
 .vscode/
 deco.py
 niokr.py
