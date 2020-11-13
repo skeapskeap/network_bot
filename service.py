@@ -120,7 +120,7 @@ def check_port(input_data):
 
 
 def new_user(user_id):
-    if str(user_id) not in settings.USER_LIST:
+    if str(user_id) not in settings.USER_LIST.keys():
         return True
     else:
         return False
