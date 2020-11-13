@@ -106,7 +106,6 @@ site
 # idea
 .idea
 
-switchinfo.py
 settings.py
 *log
 .vscode/

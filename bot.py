@@ -1,10 +1,9 @@
-from db_renew import renew_db
-from dialog import main_menu
-from dialog_ping import ping_dialog, run_ping, set_ping_ip
-from dialog_switch import back_to_commands, clear_stats, port_stats, run_command
-from dialog_switch import run_search, set_ip, set_port, switch_search, switch_dialog
-from dialog_ups import ups_dialog, set_ups_ip, ups_actions
-from handlers import whatever, wrong_input
+from db.renew import renew_db
+from dialog import main_menu, whatever, wrong_input
+from dialog.ping import ping_dialog, run_ping, set_ping_ip
+from dialog.switch import back_to_commands, clear_stats, port_stats, run_command
+from dialog.switch import run_search, set_ip, set_port, switch_search, switch_dialog
+from dialog.ups import ups_dialog, set_ups_ip, ups_actions
 from service import EveryHourRun, logger
 from telegram.ext import Updater, Filters
 from telegram.ext import MessageHandler, ConversationHandler
