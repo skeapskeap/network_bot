@@ -1,34 +1,25 @@
-from telegram import ReplyKeyboardRemove
-from service import get_smile, menu_keyboard
-from service import new_user, start_keyboard
+from service import random_smile, menu_keyboard
+from service import known_user, start_keyboard
 
 
+@known_user
 def main_menu(update, context):
-    user_id = update._effective_user.id
-    user_name = update._effective_user.first_name
-    if new_user(user_id):
-        update.message.reply_text(
-            f'Hi, {user_name}! Your ID is {user_id}',
-            reply_markup=ReplyKeyboardRemove()
-            )
-        return 'new_user'
-    else:
-        context.user_data['have_ip'] = False
-        context.user_data['have_port'] = False
-        context.user_data['have_stats'] = False
-        update.message.reply_text(
-            "You're now in main menu",
-            reply_markup=menu_keyboard()
-            )
-        return 'main_menu'
+    context.user_data['have_ip'] = False
+    context.user_data['have_port'] = False
+    context.user_data['have_stats'] = False
+    update.message.reply_text(
+        f"{random_smile()} Вы находитесь в главном меню",
+        reply_markup=menu_keyboard()
+        )
+    return 'main_menu'
 
 
 # start
+@known_user
 def whatever(update, context):
     user_name = update._effective_user.first_name
-    context.user_data['emoji'] = get_smile(context.user_data)
     update.message.reply_text(
-        f"Hi, {user_name}! {context.user_data['emoji']}\n"
+        f"{random_smile()} Привет, {user_name}!\n"
         "Press start to start",
         reply_markup=start_keyboard()
         )
@@ -36,4 +27,4 @@ def whatever(update, context):
 
 # fallback
 def wrong_input(update, context):
-    update.message.reply_text('Incorrect input')
+    update.message.reply_text(f'{random_smile()} Incorrect input')

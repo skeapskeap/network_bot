@@ -1,5 +1,5 @@
 from emoji import emojize
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from time import sleep
 import logging
 from logging import handlers
@@ -21,11 +21,10 @@ logger = logging.getLogger()
 
 
 # Выбор смайлика
-def get_smile(user_data):
-    if 'emoji' not in user_data:
-        smile = random.choice(settings.USER_EMOJI)
-        return emojize(smile, use_aliases=True)
-    return user_data['emoji']
+def random_smile():
+    smile_name = random.choice(settings.USER_EMOJI)
+    emoji = emojize(smile_name, use_aliases=True)
+    return emoji
 
 
 def start_keyboard():
@@ -119,11 +118,23 @@ def check_port(input_data):
         return False
 
 
-def new_user(user_id):
-    if str(user_id) not in settings.USER_LIST.keys():
-        return True
-    else:
-        return False
+def known_user(func):
+    def wrapper(update, context):
+        user_id = update._effective_user.id
+        user_name = update._effective_user.first_name
+
+        if str(user_id) not in settings.USER_LIST.keys():
+            update.message.reply_text(
+                f'{random_smile()} Хэллоу, {user_name}!\n'
+                f'Ваш ID {user_id}\n'
+                'Для авторизации скажите его хозяину бота',
+                reply_markup=ReplyKeyboardRemove()
+                )
+            return 'new_user'
+        else:
+            return func(update, context)
+
+    return wrapper
 
 
 def linux_cli(target: str, command: str) -> str:
