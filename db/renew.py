@@ -1,7 +1,7 @@
 import pandas as pd
 import subprocess as sp
 from db import engine
-from service import logger
+from utils import logger
 
 
 def make_df():

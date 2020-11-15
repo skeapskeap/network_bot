@@ -1,7 +1,7 @@
-from get_snmp import snmp_reachable, ups_info
-from service import check_ip, to_menu_keyboard
-from service import time_translate, ups_keyboard
+from connect.get_snmp import snmp_reachable, ups_info
+from .keyboards import to_menu_keyboard, ups_keyboard
 from settings import UPS_COMMUNITY
+from utils import check_ip, time_translate
 
 
 def ups_dialog(update, context):

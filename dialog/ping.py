@@ -1,5 +1,5 @@
-from service import check_ip, linux_cli
-from service import to_menu_keyboard, ping_keyboard
+from .keyboards import to_menu_keyboard, ping_keyboard
+from utils import check_ip, linux_cli
 
 
 def ping_dialog(update, context):

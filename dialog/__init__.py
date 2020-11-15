@@ -1,5 +1,5 @@
-from service import random_smile, menu_keyboard
-from service import known_user, start_keyboard
+from .keyboards import start_keyboard, menu_keyboard
+from utils import known_user, random_smile
 
 
 @known_user
@@ -20,11 +20,11 @@ def whatever(update, context):
     user_name = update._effective_user.first_name
     update.message.reply_text(
         f"{random_smile()} Привет, {user_name}!\n"
-        "Press start to start",
+        "Нажми на start",
         reply_markup=start_keyboard()
         )
 
 
 # fallback
 def wrong_input(update, context):
-    update.message.reply_text(f'{random_smile()} Incorrect input')
+    update.message.reply_text(f'{random_smile()} Некорректный запрос')

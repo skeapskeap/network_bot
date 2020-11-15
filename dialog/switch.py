@@ -1,10 +1,10 @@
-from get_snmp import choose_cmd, get_port_stats, sh_port, snmp_reachable
+from connect.get_snmp import choose_cmd, get_port_stats, sh_port, snmp_reachable
 from db.search import search_in_db
-from service import back_and_menu, command_keyboard, port_stats_keyboard
-from service import switch_keyboard, set_port_keyboard, to_menu_keyboard
-from service import check_ip, check_port
+from .keyboards import back_and_menu, command_keyboard, port_stats_keyboard
+from .keyboards import switch_keyboard, set_port_keyboard, to_menu_keyboard
 from settings import SW_COMMUNITY
 from time import time
+from utils import check_ip, check_port
 
 
 def switch_dialog(update, context):
@@ -18,12 +18,9 @@ def switch_dialog(update, context):
 
 
 def switch_search(update, context):
-    # выглядит криво, но это единственный способ
-    # сделать человеческие отступы в телеге
-    message = '''Введите адрес или название, или часть названия.
-Ну хоть что-нибудь. Через пробел пожалуйста.'''
     update.message.reply_text(
-        message,
+        'Введите адрес или название, или часть названия.'
+        'Ну хоть что-нибудь. Через пробел пожалуйста.',
         reply_markup=back_and_menu()
         )
     return 'search_menu'
