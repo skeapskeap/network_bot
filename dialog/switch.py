@@ -21,7 +21,7 @@ def switch_search(update, context):
     update.message.reply_text(
         'Введите адрес или название, или часть названия.'
         'Ну хоть что-нибудь. Через пробел пожалуйста.',
-        reply_markup=back_and_menu()
+        reply_markup=back_and_menu
         )
     return 'search_menu'
 
@@ -31,7 +31,7 @@ def run_search(update, context):
     result = search_in_db(words)
     update.message.reply_text(
         result,
-        reply_markup=back_and_menu()
+        reply_markup=back_and_menu
     )
     return 'search_menu'
 

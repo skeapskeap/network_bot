@@ -9,7 +9,7 @@ def start_keyboard():
 
 def menu_keyboard():
     return ReplyKeyboardMarkup(
-        [['switch', 'UPS', 'ping']],
+        [['switch', 'UPS', 'ping', 'asterisk']],
         resize_keyboard=True
         )
 
@@ -21,11 +21,10 @@ def to_menu_keyboard():
         )
 
 
-def back_and_menu():
-    return ReplyKeyboardMarkup(
-        [['menu', 'back']],
-        resize_keyboard=True
-        )
+back_and_menu = ReplyKeyboardMarkup(
+                    [['menu', 'back']],
+                    resize_keyboard=True
+                    )
 
 
 def switch_keyboard():
@@ -66,8 +65,27 @@ def ping_keyboard():
         )
 
 
-def ups_keyboard():
+ups_keyboard = ReplyKeyboardMarkup(
+                [['refresh', 'change_ip', 'menu']],
+                resize_keyboard=True
+                )
+
+asterisk_keyboard = ReplyKeyboardMarkup(
+                        [['menu', 'firewall']],
+                        resize_keyboard=True)
+
+
+def remove_from_fw_kb():
+    first_row = ['remove_ip', 'change_ip']
+    second_row = ['menu', 'back']
     return ReplyKeyboardMarkup(
-        [['refresh', 'change_ip', 'menu']],
-        resize_keyboard=True
-        )
+        [first_row, second_row],
+        resize_keyboard=True)
+
+
+def add_to_fw_kb():
+    first_row = ['add_ip', 'change_ip']
+    second_row = ['menu', 'back']
+    return ReplyKeyboardMarkup(
+        [first_row, second_row],
+        resize_keyboard=True)

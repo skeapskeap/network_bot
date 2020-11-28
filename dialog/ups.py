@@ -34,5 +34,5 @@ def ups_actions(update, context):
     for key, val in ups_summmary.items():
         reply_string += f'{key}: {val}\n'
     update.message.reply_text(reply_string,
-                              reply_markup=ups_keyboard())
+                              reply_markup=ups_keyboard)
     return 'ups_actions'
