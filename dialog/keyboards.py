@@ -74,18 +74,14 @@ asterisk_keyboard = ReplyKeyboardMarkup(
                         [['menu', 'firewall']],
                         resize_keyboard=True)
 
+firewall_keyboard = ReplyKeyboardMarkup(
+                        [['add_ip', 'remove_ip', 'search']],
+                        resize_keyboard=True)
 
-def remove_from_fw_kb():
-    first_row = ['remove_ip', 'change_ip']
-    second_row = ['menu', 'back']
-    return ReplyKeyboardMarkup(
-        [first_row, second_row],
-        resize_keyboard=True)
+remove_from_fw_kb = ReplyKeyboardMarkup(
+                        [['remove_ip', 'menu', 'back']],
+                        resize_keyboard=True)
 
-
-def add_to_fw_kb():
-    first_row = ['add_ip', 'change_ip']
-    second_row = ['menu', 'back']
-    return ReplyKeyboardMarkup(
-        [first_row, second_row],
-        resize_keyboard=True)
+add_to_fw_kb = ReplyKeyboardMarkup(
+                        [['add_ip', 'menu', 'back']],
+                        resize_keyboard=True)

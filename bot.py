@@ -1,7 +1,6 @@
 from db.renew import renew_db
 from dialog import main_menu, whatever, wrong_input
-from dialog.asterisk import asterisk_dialog, asterisk_firewall, search_ip
-from dialog.asterisk import asterisk_add, asterisk_remove
+import dialog.asterisk as ast
 from dialog.ping import ping_dialog, run_ping, set_ping_ip
 from dialog.switch import back_to_commands, clear_stats, port_stats, run_command
 from dialog.switch import run_search, set_ip, set_port, switch_search, switch_dialog
@@ -23,7 +22,7 @@ def main():
                 MessageHandler(Filters.regex('^switch$'), switch_dialog),
                 MessageHandler(Filters.regex('^UPS$'), ups_dialog),
                 MessageHandler(Filters.regex('^ping$'), ping_dialog),
-                MessageHandler(Filters.regex('^asterisk$'), asterisk_dialog)],
+                MessageHandler(Filters.regex('^asterisk$'), ast.start)],
 
             'set_ip': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
@@ -71,15 +70,20 @@ def main():
 
             'asterisk_menu': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
-                MessageHandler(Filters.regex('^firewall$'), asterisk_firewall)],
+                MessageHandler(Filters.regex('^firewall$'), ast.firewall)],
 
             'asterisk_firewall': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
-                MessageHandler(Filters.regex('^back$'), asterisk_dialog),
-                MessageHandler(Filters.regex('^change_ip$'), asterisk_firewall),
-                MessageHandler(Filters.regex('^add_ip$'), asterisk_add),
-                MessageHandler(Filters.regex('^remove_ip$'), asterisk_remove),
-                MessageHandler(Filters.text, search_ip)],
+                MessageHandler(Filters.regex('^back$'), ast.start),
+                MessageHandler(Filters.regex('^search$'), ast.search_ip),
+                MessageHandler(Filters.regex('^add_ip$'), ast.add_ip),
+                MessageHandler(Filters.regex('^remove_ip$'), ast.remove_ip)],
+
+            'asterisk_firewall_search': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.text, ast.run_search)],
+
             },
         fallbacks=[
             MessageHandler(Filters.text | Filters.photo | Filters.video | Filters.document | Filters.location, wrong_input)
