@@ -76,13 +76,34 @@ def main():
                 MessageHandler(Filters.regex('^menu$'), main_menu),
                 MessageHandler(Filters.regex('^back$'), ast.start),
                 MessageHandler(Filters.regex('^search$'), ast.search_ip),
-                MessageHandler(Filters.regex('^add_ip$'), ast.add_ip),
+                MessageHandler(Filters.regex('^add_ip$'), ast.add_start),
                 MessageHandler(Filters.regex('^remove_ip$'), ast.remove_ip)],
 
             'asterisk_firewall_search': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
                 MessageHandler(Filters.regex('^back$'), ast.firewall),
                 MessageHandler(Filters.text, ast.run_search)],
+
+            'asterisk_firewall_add_ip': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.text, ast.add_ip)],
+
+            'asterisk_firewall_add_client': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.text, ast.add_client)],
+
+            'asterisk_firewall_add_url': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.regex('^confirm$'), ast.add_record),
+                MessageHandler(Filters.text, ast.add_url)],
+
+            'asterisk_firewall_add_run': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.regex('^confirm$'), ast.add_record)],
 
             },
         fallbacks=[

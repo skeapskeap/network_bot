@@ -4,7 +4,7 @@ from .keyboards import back_and_menu, command_keyboard, port_stats_keyboard
 from .keyboards import switch_keyboard, set_port_keyboard, to_menu_keyboard
 from settings import SW_COMMUNITY
 from time import time
-from utils import check_ip, check_port
+from utils import proper_host, check_port
 
 
 def switch_dialog(update, context):
@@ -41,7 +41,7 @@ def set_ip(update, context):
     if context.user_data['have_port']:
         return ask_port(update, context)
 
-    if not check_ip(ip):  # проверка формата введённых цифр
+    if not proper_host(ip):  # проверка формата введённых цифр
         update.message.reply_text(
             'Incorrect IP',
             reply_markup=to_menu_keyboard()

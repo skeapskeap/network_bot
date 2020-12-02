@@ -1,7 +1,9 @@
 from emoji import emojize
 from logging import handlers
 from time import sleep
+from validators import url
 import logging
+import ipaddress
 import random
 import re
 import settings
@@ -26,7 +28,7 @@ def random_smile():
     return emoji
 
 
-def check_ip(target: str) -> bool:
+def proper_host(target: str) -> bool:
     try:
         '''если указан домен, проверяет резолвинг его в IP
         если указан ip, проверяет его корректность
@@ -34,6 +36,24 @@ def check_ip(target: str) -> bool:
         target = socket.gethostbyname(target)
         return True
     except socket.error:
+        return False
+
+
+def proper_ipif(ip_or_subnet: str) -> bool:
+    if not type(ip_or_subnet) is str:
+        return False
+    try:
+        ip = ipaddress.IPv4Interface(ip_or_subnet)
+        return ip.is_global
+    except (ipaddress.NetmaskValueError,
+            ipaddress.AddressValueError):
+        return False
+
+
+def proper_url(input_url: str) -> bool:
+    try:
+        return url(input_url)
+    except TypeError:
         return False
 
 

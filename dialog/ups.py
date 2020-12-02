@@ -1,7 +1,7 @@
 from connect.get_snmp import snmp_reachable, ups_info
 from .keyboards import to_menu_keyboard, ups_keyboard
 from settings import UPS_COMMUNITY
-from utils import check_ip, time_translate
+from utils import proper_host, time_translate
 
 
 def ups_dialog(update, context):
@@ -13,7 +13,7 @@ def ups_dialog(update, context):
 
 def set_ups_ip(update, context):
     ups_ip = update.message.text
-    if not check_ip(ups_ip):
+    if not proper_host(ups_ip):
         update.message.reply_text('Incorrect IP',
                                   reply_markup=to_menu_keyboard())
         return 'ups_dialog'

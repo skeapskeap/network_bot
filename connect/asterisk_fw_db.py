@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 from settings import AST_FW_DB_USER, AST_FW_DB_PWD, AST_FW_DB_ADDRESS
@@ -35,10 +36,26 @@ def search(key):
     return reply
 
 
+def insert(**kwargs):
+    new_record = FWRec(
+        ip=kwargs.get('ip'),
+        client=kwargs.get('client'),
+        koza_аpplication=kwargs.get('url'),
+        user=kwargs.get('user')
+        )
+    try:
+        session.add(new_record)
+        #session.flush()
+        session.commit()
+        return True
+    except OperationalError:
+        return False
+
+
+def delete(**kwargs):
+    record = session.query(FWRec).filter(FWRec.ip.is_('10.10.10.10')).first()
+    session.delete(record)
+
+
 if __name__ == '__main__':
-    reply = search('95.181.128.104')
-    if reply:
-        for record in reply:
-            print(f"{record['ip']} {record['client']}")
-    else:
-        print('No records found')
+    print(insert(ip='10.10.10.10', client='OOO AAA', tt_url='https://kkoza.avantel.ru/germanrequest/view/id/912437', user='Ivan'))

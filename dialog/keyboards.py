@@ -82,6 +82,6 @@ remove_from_fw_kb = ReplyKeyboardMarkup(
                         [['remove_ip', 'menu', 'back']],
                         resize_keyboard=True)
 
-add_to_fw_kb = ReplyKeyboardMarkup(
-                        [['add_ip', 'menu', 'back']],
+confirm_kb = ReplyKeyboardMarkup(
+                        [['confirm', 'menu', 'back']],
                         resize_keyboard=True)

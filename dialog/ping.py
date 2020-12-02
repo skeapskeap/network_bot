@@ -1,5 +1,5 @@
 from .keyboards import to_menu_keyboard, ping_keyboard
-from utils import check_ip, linux_cli
+from utils import proper_host, linux_cli
 
 
 def ping_dialog(update, context):
@@ -11,7 +11,7 @@ def ping_dialog(update, context):
 
 def set_ping_ip(update, context):
     ip_to_ping = update.message.text
-    if not check_ip(ip_to_ping):  # проверка формата введённых цифр
+    if not proper_host(ip_to_ping):  # проверка формата введённых цифр
         update.message.reply_text('Incorrect IP',
                                   reply_markup=to_menu_keyboard())
     else:
