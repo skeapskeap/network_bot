@@ -36,6 +36,18 @@ def search(key):
     return reply
 
 
+def search_exact(ip):
+    try:
+        result = session.query(FWRec).filter(FWRec.ip == ip).first()
+    except OperationalError:
+        return False
+
+    if not result:
+        return False
+    else:
+        return result
+
+
 def insert(**kwargs):
     new_record = FWRec(
         ip=kwargs.get('ip'),
@@ -52,10 +64,18 @@ def insert(**kwargs):
         return False
 
 
-def delete(**kwargs):
-    record = session.query(FWRec).filter(FWRec.ip.is_('10.10.10.10')).first()
-    session.delete(record)
+def delete(ip):
+    record = search_exact(ip)
+    if not record:
+        return False
+
+    try:
+        session.delete(record)
+        session.commit()
+        return True
+    except OperationalError:
+        return False
 
 
 if __name__ == '__main__':
-    print(insert(ip='10.10.10.10', client='OOO AAA', tt_url='https://kkoza.avantel.ru/germanrequest/view/id/912437', user='Ivan'))
+    print(delete('93.91.160.70'))

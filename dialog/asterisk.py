@@ -1,5 +1,7 @@
 from connect.asterisk_fw_db import search as fw_search
 from connect.asterisk_fw_db import insert as fw_insert
+from connect.asterisk_fw_db import delete as fw_delete
+from connect.asterisk_fw_db import search_exact
 from .keyboards import back_and_menu, to_menu_keyboard, asterisk_keyboard
 from .keyboards import firewall_keyboard
 from .keyboards import confirm_kb, remove_from_fw_kb, menu_keyboard
@@ -110,8 +112,34 @@ def add_record(update, context):
     return 'asterisk_firewall'
 
 
-def remove_ip(update, context):
-    ip = context.user_data['firewall_ip']
-    update.message.reply_text(f'Удалил {ip} из db. Удалить ещё что-нибудь?',
+def remove_start(update, context):
+    update.message.reply_text('Введите IP или подсеть',
                               reply_markup=back_and_menu)
+    return 'asterisk_firewall_remove_start'
+
+
+def remove_ip(update, context):
+    ip = update.message.text
+    existing_record = search_exact(ip)
+    if existing_record:
+        context.user_data['fw_ip'] = existing_record.ip
+        reply = f"{existing_record.ip}\n{existing_record.client}"
+        update.message.reply_text(reply + '\nУдаляю?',
+                                  reply_markup=confirm_kb)
+        return 'asterisk_firewall_remove_run'
+    else:
+        update.message.reply_text('Такого IP нет. Попробуйте ещё раз.',
+                                  reply_markup=back_and_menu)
+        return 'asterisk_firewall_remove_start'
+
+
+def remove_record(update, context):
+    ip = context.user_data['fw_ip']
+    removed = fw_delete(ip)
+    if removed:
+        reply = 'Удалено'
+    else:
+        reply = 'Что-то пошло не так'
+
+    update.message.reply_text(reply, reply_markup=firewall_keyboard)
     return 'asterisk_firewall'

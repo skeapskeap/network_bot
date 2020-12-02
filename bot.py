@@ -77,7 +77,7 @@ def main():
                 MessageHandler(Filters.regex('^back$'), ast.start),
                 MessageHandler(Filters.regex('^search$'), ast.search_ip),
                 MessageHandler(Filters.regex('^add_ip$'), ast.add_start),
-                MessageHandler(Filters.regex('^remove_ip$'), ast.remove_ip)],
+                MessageHandler(Filters.regex('^remove_ip$'), ast.remove_start)],
 
             'asterisk_firewall_search': [
                 MessageHandler(Filters.regex('^menu$'), main_menu),
@@ -104,6 +104,16 @@ def main():
                 MessageHandler(Filters.regex('^menu$'), main_menu),
                 MessageHandler(Filters.regex('^back$'), ast.firewall),
                 MessageHandler(Filters.regex('^confirm$'), ast.add_record)],
+
+            'asterisk_firewall_remove_start': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.text, ast.remove_ip)],
+            
+            'asterisk_firewall_remove_run': [
+                MessageHandler(Filters.regex('^menu$'), main_menu),
+                MessageHandler(Filters.regex('^back$'), ast.firewall),
+                MessageHandler(Filters.regex('^confirm$'), ast.remove_record)],
 
             },
         fallbacks=[
