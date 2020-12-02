@@ -1,4 +1,4 @@
-from .keyboards import start_keyboard, menu_keyboard
+from .keyboard import start_keyboard, menu_keyboard
 from utils import known_user, random_smile
 
 
@@ -9,7 +9,7 @@ def main_menu(update, context):
     context.user_data['have_stats'] = False
     update.message.reply_text(
         f"{random_smile()} Вы находитесь в главном меню",
-        reply_markup=menu_keyboard()
+        reply_markup=menu_keyboard
         )
     return 'main_menu'
 
@@ -21,7 +21,7 @@ def whatever(update, context):
     update.message.reply_text(
         f"{random_smile()} Привет, {user_name}!\n"
         "Нажми на start",
-        reply_markup=start_keyboard()
+        reply_markup=start_keyboard
         )
 
 

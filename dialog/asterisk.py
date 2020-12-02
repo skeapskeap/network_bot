@@ -2,9 +2,9 @@ from connect.asterisk_fw_db import search as fw_search
 from connect.asterisk_fw_db import insert as fw_insert
 from connect.asterisk_fw_db import delete as fw_delete
 from connect.asterisk_fw_db import search_exact
-from .keyboards import back_and_menu, to_menu_keyboard, asterisk_keyboard
-from .keyboards import firewall_keyboard
-from .keyboards import confirm_kb, remove_from_fw_kb, menu_keyboard
+from .keyboard import back_and_menu, asterisk_keyboard
+from .keyboard import firewall_keyboard
+from .keyboard import confirm_kb
 from settings import USER_LIST
 from utils import proper_ipif, proper_url
 
@@ -19,13 +19,13 @@ def start(update, context):
 def firewall(update, context):
     update.message.reply_text('Что будем делать?',
                               reply_markup=firewall_keyboard)
-    return 'asterisk_firewall'
+    return 'asterisk_fw'
 
 
 def search_ip(update, context):
     update.message.reply_text('Введите IP или подсеть',
                               reply_markup=back_and_menu)
-    return 'asterisk_firewall_search'
+    return 'asterisk_fw_search'
 
 
 def run_search(update, context):
@@ -34,7 +34,7 @@ def run_search(update, context):
     if not records:
         update.message.reply_text(f'Такого IP {ip} нет.',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_search'
+        return 'asterisk_fw_search'
     return records_found(update, context, records)
 
 
@@ -48,13 +48,13 @@ def records_found(update, context, records):
             reply_text += f"{record['ip']} - {record['client']}\n"
     update.message.reply_text(reply_text,
                               reply_markup=back_and_menu)
-    return 'asterisk_firewall_search'
+    return 'asterisk_fw_search'
 
 
 def add_start(update, context):
     update.message.reply_text('Введите IP или подсеть',
                               reply_markup=back_and_menu)
-    return 'asterisk_firewall_add_ip'
+    return 'asterisk_fw_add_ip'
 
 
 def add_ip(update, context):
@@ -63,11 +63,11 @@ def add_ip(update, context):
         context.user_data['fw_ip'] = ip
         update.message.reply_text('Теперь название компании',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_add_client'
+        return 'asterisk_fw_add_client'
     else:
         update.message.reply_text('Это не похоже на правильный IP',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_add_ip'
+        return 'asterisk_fw_add_ip'
 
 
 def add_client(update, context):
@@ -75,12 +75,12 @@ def add_client(update, context):
     if len(client) > 100:
         update.message.reply_text('Слишком длинное название',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_add_client'
+        return 'asterisk_fw_add_client'
     else:
         context.user_data['fw_client'] = client
         update.message.reply_text('И ещё ссылку на заявку',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_add_url'
+        return 'asterisk_fw_add_url'
 
 
 def add_url(update, context):
@@ -88,15 +88,15 @@ def add_url(update, context):
     if (not proper_url(url)) or (len(url) > 100):
         update.message.reply_text('Это не похоже на правильный URL',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_add_url'
+        return 'asterisk_fw_add_url'
     else:
         context.user_data['fw_url'] = url
         update.message.reply_text('Всё готово. Добавляю?',
                                   reply_markup=confirm_kb)
-        return 'asterisk_firewall_add_run'
+        return 'asterisk_fw_add_commit'
 
 
-def add_record(update, context):
+def add_commit(update, context):
     new_record = fw_insert(
         ip=context.user_data['fw_ip'],
         client=context.user_data['fw_client'],
@@ -109,16 +109,16 @@ def add_record(update, context):
     else:
         update.message.reply_text('Что-то пошло не так.',
                                   reply_markup=firewall_keyboard)
-    return 'asterisk_firewall'
+    return 'asterisk_fw'
 
 
-def remove_start(update, context):
+def del_start(update, context):
     update.message.reply_text('Введите IP или подсеть',
                               reply_markup=back_and_menu)
-    return 'asterisk_firewall_remove_start'
+    return 'asterisk_fw_del_ip'
 
 
-def remove_ip(update, context):
+def del_ip(update, context):
     ip = update.message.text
     existing_record = search_exact(ip)
     if existing_record:
@@ -126,14 +126,14 @@ def remove_ip(update, context):
         reply = f"{existing_record.ip}\n{existing_record.client}"
         update.message.reply_text(reply + '\nУдаляю?',
                                   reply_markup=confirm_kb)
-        return 'asterisk_firewall_remove_run'
+        return 'asterisk_fw_del_commit'
     else:
         update.message.reply_text('Такого IP нет. Попробуйте ещё раз.',
                                   reply_markup=back_and_menu)
-        return 'asterisk_firewall_remove_start'
+        return 'asterisk_fw_del_start'
 
 
-def remove_record(update, context):
+def del_commit(update, context):
     ip = context.user_data['fw_ip']
     removed = fw_delete(ip)
     if removed:
@@ -142,4 +142,4 @@ def remove_record(update, context):
         reply = 'Что-то пошло не так'
 
     update.message.reply_text(reply, reply_markup=firewall_keyboard)
-    return 'asterisk_firewall'
+    return 'asterisk_fw'
